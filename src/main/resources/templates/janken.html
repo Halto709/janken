@@ -1,0 +1,25 @@
+<body>
+  <h1>Janken GAME!</h1>
+
+  <div th:if="${playerName}">
+    Hi [[${playerName}]]
+  </div>
+
+  <div>
+    <!--Queryパラメータ-->
+    <a href="/jankengame?hand=Gu">グー</a> <a href="/jankengame?hand=Choki">チョキ</a> <a href="/jankengame?hand=Pa">パー</a>
+  </div>
+
+
+  <div th:if="${playerHand}">
+    あなたの手 [[${playerHand}]]
+  </div>
+  <div th:if="${enemyHand}">
+    相手の手 [[${enemyHand}]]
+  </div>
+  <div th:if="${jankenResult}">
+    結果 [[${jankenResult}]]
+  </div>
+
+
+</body>
