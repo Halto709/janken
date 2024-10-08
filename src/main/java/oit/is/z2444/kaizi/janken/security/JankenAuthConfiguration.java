@@ -10,6 +10,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/*
+ * 認証用にアノテーションを忘れずに
+ */
 @Configuration
 @EnableWebSecurity
 public class JankenAuthConfiguration {
