@@ -1,9 +1,6 @@
 <body>
 
-  <h1>Authorized! [[${login_user}]]</h1>
   <a href="/logout">ログアウト</a>
-
-
   <h1>Janken GAME!</h1>
 
   <script th:inline="javascript" th:if=${janken}>
@@ -20,6 +17,18 @@
       console.log(janken);//ログ出力．ブラウザのコンソール画面に表示される
     }
   </script>
+
+
+  <div th:if="${entry}">
+    エントリー人数：[[${entry.userCount}]]人
+    <ul>
+      <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
+        thが指定されているので[]が不要になる-->
+      <li th:each="user : ${entry.users}">[[${user}]]</li>
+
+    </ul>
+  </div>
+
 
   <div th:if="${playerName}">
     Hi [[${playerName}]]
