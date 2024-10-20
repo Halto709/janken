@@ -18,20 +18,19 @@
     }
   </script>
 
-
-  <div th:if="${entry}">
-    エントリー人数：[[${entry.userCount}]]人
-    <ul>
-      <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
-        thが指定されているので[]が不要になる-->
-      <li th:each="user : ${entry.users}">[[${user}]]</li>
-
-    </ul>
+  <div th:if="${playerName}">
+    Hi [[${playerName}]]
   </div>
 
 
-  <div th:if="${playerName}">
-    Hi [[${playerName}]]
+  <div th:if="${users}">
+    エントリー
+    <ul>
+      <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
+        thが指定されているので[]が不要になる-->
+      <li th:each="user : ${users}">[[${user.userName}]]</li>
+
+    </ul>
   </div>
 
   <div>
