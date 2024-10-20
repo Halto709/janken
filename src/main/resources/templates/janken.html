@@ -22,15 +22,27 @@
     Hi [[${playerName}]]
   </div>
 
-
+  <!-- エントリーしているユーザ情報 -->
   <div th:if="${users}">
-    エントリー
+    <h1>エントリー</h1>
     <ul>
       <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
         thが指定されているので[]が不要になる-->
       <li th:each="user : ${users}">[[${user.userName}]]</li>
 
     </ul>
+  </div>
+
+  <!-- 過去のマッチ情報 -->
+  <div th:if="${matches}">
+    <h1>試合結果</h1>
+    <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
+          thが指定されているので[]が不要になる-->
+    <div th:each="match : ${matches}">
+      id:[[${match.id}]] user1:[[${match.user1}]] user2:[[${match.user2}]] user1の手:[[${match.user1Hand}]]
+      user2の手:[[${match.user2Hand}]]
+    </div>
+
   </div>
 
   <div>

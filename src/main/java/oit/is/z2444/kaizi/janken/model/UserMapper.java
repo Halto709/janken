@@ -24,6 +24,6 @@ public interface UserMapper {
   int countById();
 
   @Select("SELECT id, userName FROM users;")
-  ArrayList<User> selectAllusers();
+  ArrayList<User> selectAllUsers();
 
 }
