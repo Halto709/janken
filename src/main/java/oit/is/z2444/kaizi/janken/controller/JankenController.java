@@ -44,6 +44,27 @@ public class JankenController {
     return "janken.html";
   }
 
+  @GetMapping("/match")
+  public String sample23(@RequestParam Integer id, Principal prin, ModelMap model) {
+
+    String loginUser = prin.getName();
+    model.addAttribute("loginUser", loginUser);
+
+    User opponent = userMapper.selectById(id);
+    model.addAttribute("opponent", opponent);
+
+    return "match.html";
+  }
+
+  @GetMapping("/match")
+  public String jankengame(@RequestParam int id, @RequestParam String hand, ModelMap model) {
+    Janken janken = new Janken(hand);
+
+    // それぞれの情報を格納
+    model.addAttribute("janken", janken);
+    return "janken.html";
+  }
+
   /**
    * POSTを受け付ける場合は@PostMappingを利用する
    *
@@ -62,13 +83,5 @@ public class JankenController {
    * @param model
    * @return
    */
-  @GetMapping("/jankengame")
-  public String jankengame(@RequestParam String hand, ModelMap model) {
-    Janken janken = new Janken(hand);
-
-    // それぞれの情報を格納
-    model.addAttribute("janken", janken);
-    return "janken.html";
-  }
 
 }

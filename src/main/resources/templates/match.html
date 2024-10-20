@@ -1,0 +1,38 @@
+<body>
+  <a href="/logout">ログアウト</a>
+
+  <h1>Match</h1>
+  <script th:inline="javascript" th:if=${janken}>
+    window.onload = function () {
+      //janken変数の内容を読み取る
+      var janken = [[${ janken }]];
+      //3つの数値を文字列として保持する変数
+      var result_txt = "";
+      result_txt += "あなたの手 " + janken.playerHand;
+      result_txt += "<br>相手の手 " + janken.enemyHand;
+      result_txt += "<br>結果 " + janken.jankenResult;
+      //DOM操作
+      document.getElementById("janken").innerHTML = result_txt;
+      console.log(janken);//ログ出力．ブラウザのコンソール画面に表示される
+    }
+  </script>
+
+  <div th:if="${loginUser}">
+    <div th:if="${opponent}">
+      <h1>[[${loginUser}]] V.S. [[${opponent.userName}]]</h1>
+    </div>
+  </div>
+
+  <div>
+    <!--Queryパラメータ-->
+    <a href="/jankengame?hand=Gu">グー</a> <a href="/jankengame?hand=Choki">チョキ</a> <a href="/jankengame?hand=Pa">パー</a>
+  </div>
+
+  <!-- 結果を表示するための場所 -->
+  <div id="janken"></div>
+
+
+
+
+
+</body>
