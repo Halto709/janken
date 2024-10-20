@@ -17,6 +17,7 @@
     }
   </script>
 
+
   <div th:if="${loginUser}">
     <div th:if="${opponent}">
       <h1>[[${loginUser}]] V.S. [[${opponent.userName}]]</h1>
@@ -25,14 +26,14 @@
 
   <div>
     <!--Queryパラメータ-->
-    <a href="/jankengame?hand=Gu">グー</a> <a href="/jankengame?hand=Choki">チョキ</a> <a href="/jankengame?hand=Pa">パー</a>
+    <a th:href="@{/fight(id=${opponent_id}, hand=Gu)}">グー</a>
+    <a th:href="@{/fight(id=${opponent_id}, hand=Choki)}">チョキ</a>
+    <a th:href="@{/fight(id=${opponent_id}, hand=Pa)}">パー</a>
   </div>
 
   <!-- 結果を表示するための場所 -->
   <div id="janken"></div>
 
-
-
-
+  <a href="/janken">もどる</a>
 
 </body>

@@ -49,20 +49,34 @@ public class JankenController {
 
     String loginUser = prin.getName();
     model.addAttribute("loginUser", loginUser);
-
     User opponent = userMapper.selectById(id);
+    // matchMapper.insertMatch(id, userMapper.selectByUserName(loginUser).getId());
     model.addAttribute("opponent", opponent);
+    model.addAttribute("opponent_id", id);
 
     return "match.html";
   }
 
-  @GetMapping("/match")
-  public String jankengame(@RequestParam int id, @RequestParam String hand, ModelMap model) {
+  @GetMapping("/fight")
+  public String jankengame(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
     Janken janken = new Janken(hand);
+
+    User user = userMapper.selectByUserName(prin.getName());
+
+    Match match = new Match();
+    match.setUser1(user.getId());
+    match.setUser2(id);
+    match.setUser1Hand(hand);
+    match.setUser2Hand(janken.getEnemyHand());
+
+    matchMapper.insertMatch(match);
 
     // それぞれの情報を格納
     model.addAttribute("janken", janken);
-    return "janken.html";
+    model.addAttribute("opponent", userMapper.selectById(id));
+    model.addAttribute("loginUser", prin.getName());
+    model.addAttribute("opponent_id", id);
+    return "match.html";
   }
 
   /**
@@ -77,11 +91,5 @@ public class JankenController {
     model.addAttribute("playerName", playerName);
     return "janken.html";
   }
-
-  /**
-   * @param playerHand
-   * @param model
-   * @return
-   */
 
 }
