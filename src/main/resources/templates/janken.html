@@ -29,7 +29,7 @@
       <!--eachは所謂for each．この場合roomオブジェクトのusersフィールドにあるすべてのデータを一通り表示する
         thが指定されているので[]が不要になる-->
       <li th:each="user : ${users}">
-        <a th:href="@{/match(id=${user.id})}">[[${user.userName}]]</a>
+        <a th:href="@{/match(id=${user.id})}">[[${user.name}]]</a>
       </li>
 
     </ul>

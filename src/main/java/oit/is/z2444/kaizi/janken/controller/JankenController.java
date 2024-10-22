@@ -61,7 +61,7 @@ public class JankenController {
   public String jankengame(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
     Janken janken = new Janken(hand);
 
-    User user = userMapper.selectByUserName(prin.getName());
+    User user = userMapper.selectByName(prin.getName());
 
     Match match = new Match();
     match.setUser1(user.getId());
