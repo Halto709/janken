@@ -4,8 +4,16 @@ CREATE TABLE users (
 );
 CREATE TABLE matches (
     id IDENTITY,
-    user1 INT,
-    user2 INT,
+    user1 INT NOT NULL,
+    user2 INT NOT NULL,
     user1Hand VARCHAR,
-    user2Hand VARCHAR
+    user2Hand VARCHAR,
+    isActive BOOLEAN DEFAULT FALSE
 );
+CREATE TABLE matchinfo (
+    id IDENTITY,
+    user1 INT NOT NULL,
+    user2 INT NOT NULL,
+    user1Hand VARCHAR,
+    isActive BOOLEAN
+)
