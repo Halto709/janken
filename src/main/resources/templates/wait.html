@@ -1,11 +1,19 @@
-<a href="/logout">ログアウト</a>
-<br>
-相手の手を待ってます
-</br>
+<h1>相手の手を待ってます</h1>
+
 
 <div th:if="${user1}">
   Hi [[${user1.name}]]
 </div>
 
+<script>
+  window.onload = function () {
+
+    const sse = new EventSource('/wait');
+    sse.onmessage = function (event) {
+      console.log(event);
+      document.getElementById("p1").textContent = event.data + event.lastEventId;
+    }
+  }
+</script>
 
 <a href="/janken">もどる</a>

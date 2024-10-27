@@ -70,30 +70,22 @@ public class JankenController {
 
   @GetMapping("/fight")
   public String fight(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
-    Janken janken = new Janken(hand);
 
-    User user = userMapper.selectByName(prin.getName());
-
-    Match match = new Match();
-    match.setUser1(user.getId());
-    match.setUser2(id);
-    match.setUser1Hand(hand);
-    match.setUser2Hand(janken.getEnemyHand());
-
-    matchMapper.insertMatch(match);
-
-    // それぞれの情報を格納
-    model.addAttribute("janken", janken);
-    model.addAttribute("opponent", userMapper.selectById(id));
-    model.addAttribute("loginUser", prin.getName());
-    model.addAttribute("opponent_id", id);
-
-    return "match.html";
-  }
-
-  @GetMapping("/wait")
-  public String wait(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
-
+    /*
+     * Janken janken = new Janken(hand);
+     * User user = userMapper.selectByName(prin.getName());
+     * Match match = new Match();
+     * match.setUser1(user.getId());
+     * match.setUser2(id);
+     * match.setUser1Hand(hand);
+     * match.setUser2Hand(janken.getEnemyHand());
+     * matchMapper.insertMatch(match);
+     *
+     * model.addAttribute("janken", janken);
+     * model.addAttribute("opponent", userMapper.selectById(id));
+     * model.addAttribute("loginUser", prin.getName());
+     * model.addAttribute("opponent_id", id);
+     */
     // ユーザの情報を取得
     User user1 = userMapper.selectByName(prin.getName());
     User user2 = userMapper.selectById(id);
