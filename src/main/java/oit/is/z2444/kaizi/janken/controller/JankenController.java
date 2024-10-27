@@ -50,7 +50,7 @@ public class JankenController {
   }
 
   @GetMapping("/match")
-  public String sample23(@RequestParam Integer id, Principal prin, ModelMap model) {
+  public String match(@RequestParam Integer id, Principal prin, ModelMap model) {
 
     // 入室処理の実装（目標）
     String loginUser = prin.getName();
@@ -67,7 +67,43 @@ public class JankenController {
   }
 
   @GetMapping("/fight")
-  public String jankengame(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
+  public String fight(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
+    Janken janken = new Janken(hand);
+
+    User user = userMapper.selectByName(prin.getName());
+
+    Match match = new Match();
+    match.setUser1(user.getId());
+    match.setUser2(id);
+    match.setUser1Hand(hand);
+    match.setUser2Hand(janken.getEnemyHand());
+
+    matchMapper.insertMatch(match);
+
+    // それぞれの情報を格納
+    model.addAttribute("janken", janken);
+    model.addAttribute("opponent", userMapper.selectById(id));
+    model.addAttribute("loginUser", prin.getName());
+    model.addAttribute("opponent_id", id);
+
+    return "match.html";
+  }
+
+  /**
+   * POSTを受け付ける場合は@PostMappingを利用する
+   *
+   * @param playerName
+   * @param model
+   * @return
+   */
+  @PostMapping("/janken")
+  public String janken(@RequestParam String playerName, ModelMap model) {
+    model.addAttribute("playerName", playerName);
+    return "janken.html";
+  }
+
+  @GetMapping("/wait")
+  public String wait(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
     Janken janken = new Janken(hand);
 
     User user1 = userMapper.selectByName(prin.getName());
@@ -90,19 +126,6 @@ public class JankenController {
 
     // return "match.html";
     return "wait.html";
-  }
-
-  /**
-   * POSTを受け付ける場合は@PostMappingを利用する
-   *
-   * @param playerName
-   * @param model
-   * @return
-   */
-  @PostMapping("/janken")
-  public String janken(@RequestParam String playerName, ModelMap model) {
-    model.addAttribute("playerName", playerName);
-    return "janken.html";
   }
 
 }
