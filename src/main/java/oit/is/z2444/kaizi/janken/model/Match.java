@@ -8,6 +8,18 @@ public class Match {
   String user2Hand;
   Boolean isActive;
 
+  public Match() {
+
+  }
+
+  public Match(int user1, int user2, String user1Hand, String user2Hand) {
+    this.user1 = user1;
+    this.user2 = user2;
+    this.user1Hand = user1Hand;
+    this.user2Hand = user2Hand;
+    isActive = false;
+  }
+
   public int getId() {
     return id;
   }

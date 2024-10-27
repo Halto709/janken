@@ -9,6 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import oit.is.z2444.kaizi.janken.model.Janken;
 import oit.is.z2444.kaizi.janken.model.Entry;
@@ -46,7 +47,6 @@ public class JankenController {
     model.addAttribute("users", users);
     model.addAttribute("matches", matches);
 
-    User user2 = userMapper.selectByName(prin.getName());
     // ログイン後にアクティブな試合を表示する用
     ArrayList<MatchInfo> activeMatches = MIMapper.selectMatchIsActive();
     model.addAttribute("activeMatches", activeMatches);
@@ -89,9 +89,23 @@ public class JankenController {
     // ユーザの情報を取得
     User user1 = userMapper.selectByName(prin.getName());
     User user2 = userMapper.selectById(id);
+    MatchInfo matchInfo;
 
-    MatchInfo matchInfo = new MatchInfo(user1.getId(), user2.getId(), hand);
-    MIMapper.insertMatchInfo(matchInfo);
+    // 試合が存在するかどうかで分岐
+    if (MIMapper.isMatchInfo(user2.getId(), user1.getId())) {
+      // 存在するならば，Matchの情報に追加する
+      matchInfo = MIMapper.selectMatchInfo(user2.getId(), user1.getId());
+      Match match = new Match(user1.getId(), user2.getId(), matchInfo.getUser1Hand(), hand);
+      matchMapper.insertMatch(match);
+
+      // matchInfoのisActiveをfalseに
+      MIMapper.updateMatchInfoNonActive(matchInfo);
+
+    } else {
+      // 存在しない
+      matchInfo = new MatchInfo(user1.getId(), user2.getId(), hand);
+      MIMapper.insertMatchInfo(matchInfo);
+    }
 
     // それぞれの情報を格納
     // model.addAttribute("janken", janken);
@@ -102,6 +116,16 @@ public class JankenController {
     // return "match.html";
     return "wait.html";
   }
+
+  /*
+   * @GetMapping("/fight")
+   * public SseEmitter kekka(Principal prin, ModelMap model) {
+   *
+   * SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+   *
+   * return emitter;
+   * }
+   */
 
   /**
    * POSTを受け付ける場合は@PostMappingを利用する

@@ -13,11 +13,15 @@ public interface MatchInfoMapper {
   @Insert("INSERT INTO matchInfo (user1, user2, user1Hand, isActive) VALUES (#{user1}, #{user2}, #{user1Hand}, #{isActive})")
   void insertMatchInfo(MatchInfo matchInfo);
 
-  @Update("UPDATE matchInfo")
-  void updateMatchInfo(MatchInfo matchInfo);
+  @Update("UPDATE matchInfo SET isActive = false WHERE id = #{id}")
+  void updateMatchInfoNonActive(MatchInfo matchInfo);
 
-  @Select("SELECT * FROM matchInfo where user2 = #{user2}")
-  MatchInfo seleMatchInfo(int user2);
+  @Select("SELECT id, user1, user2, user1Hand, isActive FROM matchInfo where user1 = #{user1} AND user2 = #{user2} AND isActive = true")
+  MatchInfo selectMatchInfo(int user1, int user2);
+
+  // すでにマッチがあるかどうかを確認
+  @Select("SELECT EXISTS (SELECT 1 FROM matchInfo WHERE user1 = #{user1} AND user2 = #{user2})")
+  Boolean isMatchInfo(int user1, int user2);
 
   @Select("SELECT id, user1, user2, user1Hand, isActive FROM matchInfo where isActive = true")
   ArrayList<MatchInfo> selectMatchIsActive();
