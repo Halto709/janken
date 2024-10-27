@@ -46,6 +46,10 @@ public class JankenController {
     model.addAttribute("users", users);
     model.addAttribute("matches", matches);
 
+    User user2 = userMapper.selectByName(prin.getName());
+    // ログイン後にアクティブな試合を表示する用
+    ArrayList<MatchInfo> activeMatches = MIMapper.selectMatchIsActive();
+    model.addAttribute("activeMatches", activeMatches);
     return "janken.html";
   }
 
@@ -57,8 +61,6 @@ public class JankenController {
 
     User user1 = userMapper.selectByName(loginUser);
     User user2 = userMapper.selectById(id);
-    MatchInfo matchInfo = new MatchInfo(user1.getId(), user2.getId());
-    MIMapper.insertMatchInfo(matchInfo);
 
     model.addAttribute("user1", user1);
     model.addAttribute("user2", user2);
@@ -89,6 +91,26 @@ public class JankenController {
     return "match.html";
   }
 
+  @GetMapping("/wait")
+  public String wait(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
+
+    // ユーザの情報を取得
+    User user1 = userMapper.selectByName(prin.getName());
+    User user2 = userMapper.selectById(id);
+
+    MatchInfo matchInfo = new MatchInfo(user1.getId(), user2.getId(), hand);
+    MIMapper.insertMatchInfo(matchInfo);
+
+    // それぞれの情報を格納
+    // model.addAttribute("janken", janken);
+    model.addAttribute("user1", user1);
+    model.addAttribute("user2", user2);
+    model.addAttribute("matchInfo", matchInfo);
+
+    // return "match.html";
+    return "wait.html";
+  }
+
   /**
    * POSTを受け付ける場合は@PostMappingを利用する
    *
@@ -100,32 +122,6 @@ public class JankenController {
   public String janken(@RequestParam String playerName, ModelMap model) {
     model.addAttribute("playerName", playerName);
     return "janken.html";
-  }
-
-  @GetMapping("/wait")
-  public String wait(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
-    Janken janken = new Janken(hand);
-
-    User user1 = userMapper.selectByName(prin.getName());
-
-    Match match = new Match();
-    match.setUser1(user1.getId());
-    match.setUser2(id);
-    match.setUser1Hand(hand);
-    match.setUser2Hand(janken.getEnemyHand());
-
-    matchMapper.insertMatch(match);
-
-    // ユーザの情報を取得
-    User user2 = userMapper.selectById(id);
-
-    // それぞれの情報を格納
-    // model.addAttribute("janken", janken);
-    model.addAttribute("user1", user1);
-    model.addAttribute("user2", user2);
-
-    // return "match.html";
-    return "wait.html";
   }
 
 }

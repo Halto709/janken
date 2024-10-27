@@ -11,9 +11,11 @@ public class MatchInfo {
 
   }
 
-  public MatchInfo(int user1, int user2) {
+  public MatchInfo(int user1, int user2, String user1Hand) {
     this.user1 = user1;
     this.user2 = user2;
+    this.user1Hand = user1Hand;
+    isActive = true;
   }
 
   public int getId() {
