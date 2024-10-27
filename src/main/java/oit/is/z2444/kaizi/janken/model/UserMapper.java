@@ -18,7 +18,7 @@ public interface UserMapper {
   void insertUsers(String name);
 
   @Select("SELECT id, name FROM users WHERE name = #{name};")
-  User selectByName(String userName);
+  User selectByName(String name);
 
   @Select("SELECT COUNT(id) FROM users;")
   int countById();

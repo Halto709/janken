@@ -15,6 +15,8 @@ import oit.is.z2444.kaizi.janken.model.Entry;
 import oit.is.z2444.kaizi.janken.model.User;
 import oit.is.z2444.kaizi.janken.model.UserMapper;
 import oit.is.z2444.kaizi.janken.model.Match;
+import oit.is.z2444.kaizi.janken.model.MatchInfo;
+import oit.is.z2444.kaizi.janken.model.MatchInfoMapper;
 import oit.is.z2444.kaizi.janken.model.MatchMapper;
 
 @Controller
@@ -28,6 +30,9 @@ public class JankenController {
 
   @Autowired
   private MatchMapper matchMapper;
+
+  @Autowired
+  private MatchInfoMapper MIMapper;
 
   @GetMapping("/janken")
   public String janken(Principal prin, ModelMap model) {
@@ -47,12 +52,16 @@ public class JankenController {
   @GetMapping("/match")
   public String sample23(@RequestParam Integer id, Principal prin, ModelMap model) {
 
+    // 入室処理の実装（目標）
     String loginUser = prin.getName();
-    model.addAttribute("loginUser", loginUser);
-    User opponent = userMapper.selectById(id);
-    // matchMapper.insertMatch(id, userMapper.selectByUserName(loginUser).getId());
-    model.addAttribute("opponent", opponent);
-    model.addAttribute("opponent_id", id);
+
+    User user1 = userMapper.selectByName(loginUser);
+    User user2 = userMapper.selectById(id);
+    MatchInfo matchInfo = new MatchInfo(user1.getId(), user2.getId());
+    MIMapper.insertMatchInfo(matchInfo);
+
+    model.addAttribute("user1", user1);
+    model.addAttribute("user2", user2);
 
     return "match.html";
   }
@@ -61,22 +70,26 @@ public class JankenController {
   public String jankengame(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
     Janken janken = new Janken(hand);
 
-    User user = userMapper.selectByName(prin.getName());
+    User user1 = userMapper.selectByName(prin.getName());
 
     Match match = new Match();
-    match.setUser1(user.getId());
+    match.setUser1(user1.getId());
     match.setUser2(id);
     match.setUser1Hand(hand);
     match.setUser2Hand(janken.getEnemyHand());
 
     matchMapper.insertMatch(match);
 
+    // ユーザの情報を取得
+    User user2 = userMapper.selectById(id);
+
     // それぞれの情報を格納
-    model.addAttribute("janken", janken);
-    model.addAttribute("opponent", userMapper.selectById(id));
-    model.addAttribute("loginUser", prin.getName());
-    model.addAttribute("opponent_id", id);
-    return "match.html";
+    // model.addAttribute("janken", janken);
+    model.addAttribute("user1", user1);
+    model.addAttribute("user2", user2);
+
+    // return "match.html";
+    return "wait.html";
   }
 
   /**
