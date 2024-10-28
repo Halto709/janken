@@ -3,17 +3,36 @@
 
 <head>
   <meta charset="utf-8">
-  <title>SpringBoot Sample5-8</title>
+  <title>janken result</title>
   <script>
     window.onload = function () {
 
       const sse = new EventSource('/result');
       sse.onmessage = function (event) {
-        console.log(event);
+        console.log("sse.onmessage");
         var result_list = JSON.parse(event.data);
 
+        results = "";
+
         var kekka = "<h2>" + "結果" + "</h2>";
-        var results = result_list.map(match => `<p>${match.user1} vs ${match.user2}: ${match.user1Hand} vs ${match.user2Hand}</p>`).join("");
+        for (var i = 0; i < result_list.length; i++) {
+          var match = result_list[i]; // マッチ情報を取得
+          var matchId = match.id; // Match ID
+          var user1 = match.user1; // User1を取得
+          var user2 = match.user2; // User2を取得
+          var user1Hand = match.user1Hand; // User1の手を取得
+          var user2Hand = match.user2Hand; // User2の手を取得
+
+          // 出力の形式に従った文字列の構築
+          var result = "<p>Match ID: " + matchId
+            + " user1: " + user1
+            + " user2: " + user2
+            + " user1Hand: " + user1Hand
+            + " user2Hand: " + user2Hand + "</p>";
+
+          results += result; // 結果を連結
+        }
+
         document.getElementById("matchResult").innerHTML = kekka + results + "<a href='/janken'>もどる</a>";
 
       }
@@ -34,5 +53,5 @@
     Hi [[${user1.name}]]
   </div>
 
-  <p id="matchResult"></p>
+  <div id="matchResult"></div> <!--matchResultの中身を表示するためにdiv-->
 </body>

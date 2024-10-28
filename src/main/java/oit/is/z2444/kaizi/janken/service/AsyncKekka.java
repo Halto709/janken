@@ -62,7 +62,12 @@ public class AsyncKekka {
         emitter.send(reslut);
 
         TimeUnit.MILLISECONDS.sleep(1000);
+        logger.info("done");
         dbUpdated = false;
+
+        for (Match match : reslut) {
+          matchMapper.updateMatchIsNonActive(match);
+        }
       }
     } catch (Exception e) {
       // 例外の名前とメッセージだけ表示する
