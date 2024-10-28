@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/schema/security">
+
+<head>
+  <meta charset="utf-8">
+  <title>SpringBoot Sample5-8</title>
+  <script>
+    window.onload = function () {
+
+      const sse = new EventSource('/result');
+      sse.onmessage = function (event) {
+        console.log(event);
+        var result_list = JSON.parse(event.data);
+
+        var kekka = "<h2>" + "結果" + "</h2>";
+        var results = result_list.map(match => `<p>${match.user1} vs ${match.user2}: ${match.user1Hand} vs ${match.user2Hand}</p>`).join("");
+        document.getElementById("matchResult").innerHTML = kekka + results + "<a href='/janken'>もどる</a>";
+
+      }
+    }
+  </script>
+</head>
+
+
+
+
+
+
+<body>
+  <h1>相手の手を待ってます</h1>
+
+
+  <div th:if="${user1}">
+    Hi [[${user1.name}]]
+  </div>
+
+  <p id="matchResult"></p>
+</body>

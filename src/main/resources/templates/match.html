@@ -18,17 +18,17 @@
   </script>
 
 
-  <div th:if="${loginUser}">
-    <div th:if="${opponent}">
-      <h1>[[${loginUser}]] V.S. [[${opponent.userName}]]</h1>
+  <div th:if="${user1}">
+    <div th:if="${user2}">
+      <h1>[[${user1.name}]] V.S. [[${user2.name}]]</h1>
     </div>
   </div>
 
   <div>
     <!--Queryパラメータ-->
-    <a th:href="@{/fight(id=${opponent_id}, hand=Gu)}">グー</a>
-    <a th:href="@{/fight(id=${opponent_id}, hand=Choki)}">チョキ</a>
-    <a th:href="@{/fight(id=${opponent_id}, hand=Pa)}">パー</a>
+    <a th:href="@{/fight(id=${user2.id}, hand=Gu)}">グー</a>
+    <a th:href="@{/fight(id=${user2.id}, hand=Choki)}">チョキ</a>
+    <a th:href="@{/fight(id=${user2.id}, hand=Pa)}">パー</a>
   </div>
 
   <!-- 結果を表示するための場所 -->

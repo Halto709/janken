@@ -1,24 +1,34 @@
 package oit.is.z2444.kaizi.janken.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import oit.is.z2444.kaizi.janken.model.Janken;
 import oit.is.z2444.kaizi.janken.model.Entry;
 import oit.is.z2444.kaizi.janken.model.User;
 import oit.is.z2444.kaizi.janken.model.UserMapper;
+import oit.is.z2444.kaizi.janken.service.AsyncKekka;
 import oit.is.z2444.kaizi.janken.model.Match;
+import oit.is.z2444.kaizi.janken.model.MatchInfo;
+import oit.is.z2444.kaizi.janken.model.MatchInfoMapper;
 import oit.is.z2444.kaizi.janken.model.MatchMapper;
 
 @Controller
 public class JankenController {
+
+  private final Logger logger = LoggerFactory.getLogger(JankenController.class);
 
   @Autowired
   private Entry entry;
@@ -28,6 +38,12 @@ public class JankenController {
 
   @Autowired
   private MatchMapper matchMapper;
+
+  @Autowired
+  private MatchInfoMapper MIMapper;
+
+  @Autowired
+  AsyncKekka result;
 
   @GetMapping("/janken")
   public String janken(Principal prin, ModelMap model) {
@@ -41,42 +57,66 @@ public class JankenController {
     model.addAttribute("users", users);
     model.addAttribute("matches", matches);
 
+    // ログイン後にアクティブな試合を表示する用
+    ArrayList<MatchInfo> activeMatches = MIMapper.selectMatchIsActive();
+    model.addAttribute("activeMatches", activeMatches);
     return "janken.html";
   }
 
   @GetMapping("/match")
-  public String sample23(@RequestParam Integer id, Principal prin, ModelMap model) {
+  public String match(@RequestParam Integer id, Principal prin, ModelMap model) {
 
+    // 入室処理の実装（目標）
     String loginUser = prin.getName();
-    model.addAttribute("loginUser", loginUser);
-    User opponent = userMapper.selectById(id);
-    // matchMapper.insertMatch(id, userMapper.selectByUserName(loginUser).getId());
-    model.addAttribute("opponent", opponent);
-    model.addAttribute("opponent_id", id);
+
+    User user1 = userMapper.selectByName(loginUser);
+    User user2 = userMapper.selectById(id);
+
+    model.addAttribute("user1", user1);
+    model.addAttribute("user2", user2);
 
     return "match.html";
   }
 
   @GetMapping("/fight")
-  public String jankengame(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
-    Janken janken = new Janken(hand);
+  @Transactional
+  public String fight(@RequestParam int id, @RequestParam String hand, Principal prin, ModelMap model) {
 
-    User user = userMapper.selectByUserName(prin.getName());
+    // ユーザの情報を取得
+    User user1 = userMapper.selectByName(prin.getName());
+    User user2 = userMapper.selectById(id);
+    MatchInfo matchInfo;
 
-    Match match = new Match();
-    match.setUser1(user.getId());
-    match.setUser2(id);
-    match.setUser1Hand(hand);
-    match.setUser2Hand(janken.getEnemyHand());
+    // 試合が存在するかどうかで分岐
+    if (MIMapper.isMatchInfo(user2.getId(), user1.getId())) {
+      try {
+        final Match matchResult = this.result.syncMatchResult(user2.getId(), user1.getId(), hand);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-    matchMapper.insertMatch(match);
+    } else {
+      // 存在しない
+      matchInfo = new MatchInfo(user1.getId(), user2.getId(), hand);
+      MIMapper.insertMatchInfo(matchInfo);
+    }
 
     // それぞれの情報を格納
-    model.addAttribute("janken", janken);
-    model.addAttribute("opponent", userMapper.selectById(id));
-    model.addAttribute("loginUser", prin.getName());
-    model.addAttribute("opponent_id", id);
-    return "match.html";
+    // model.addAttribute("janken", janken);
+    model.addAttribute("user1", user1);
+    model.addAttribute("user2", user2);
+
+    // return "match.html";
+    return "wait.html";
+  }
+
+  @GetMapping("/result")
+  public SseEmitter result(Principal prin, ModelMap model) {
+
+    logger.info("waiting...");
+    SseEmitter emitter = new SseEmitter();
+    this.result.asyncResult(emitter);
+    return emitter;
   }
 
   /**
