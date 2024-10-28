@@ -22,6 +22,6 @@ public interface MatchMapper {
   ArrayList<Match> selectAllActiveMatch();
 
   @Update("UPDATE matches SET isActive = false where id = #{id}")
-  void updateMatchIsNonActive(int id);
+  void updateMatchIsNonActive(Match match);
 
 }
