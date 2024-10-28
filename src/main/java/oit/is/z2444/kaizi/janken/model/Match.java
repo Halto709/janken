@@ -17,7 +17,7 @@ public class Match {
     this.user2 = user2;
     this.user1Hand = user1Hand;
     this.user2Hand = user2Hand;
-    isActive = false;
+    isActive = true;
   }
 
   public int getId() {

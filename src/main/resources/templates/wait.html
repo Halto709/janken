@@ -1,24 +1,38 @@
-<h1>相手の手を待ってます</h1>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/schema/security">
 
+<head>
+  <meta charset="utf-8">
+  <title>SpringBoot Sample5-8</title>
+  <script>
+    window.onload = function () {
 
-<div th:if="${user1}">
-  Hi [[${user1.name}]]
-</div>
+      const sse = new EventSource('/result');
+      sse.onmessage = function (event) {
+        console.log(event);
+        var result_list = JSON.parse(event.data);
 
-<script>
-  window.onload = function () {
+        var kekka = "<h2>" + "結果" + "</h2>";
+        var results = result_list.map(match => `<p>${match.user1} vs ${match.user2}: ${match.user1Hand} vs ${match.user2Hand}</p>`).join("");
+        document.getElementById("matchResult").innerHTML = kekka + results + "<a href='/janken'>もどる</a>";
 
-    const sse = new EventSource('/wait');
-    sse.onmessage = function (event) {
-      console.log(event);
-      document.getElementById("p1").textContent = event.data + event.lastEventId;
+      }
     }
-  }
-</script>
+  </script>
+</head>
+
+
+
+
 
 
 <body>
-  <h2 id="p1">結果</h2>
-  <p id="p1"></p>
-  <a href="/janken">もどる</a>
+  <h1>相手の手を待ってます</h1>
+
+
+  <div th:if="${user1}">
+    Hi [[${user1.name}]]
+  </div>
+
+  <p id="matchResult"></p>
 </body>

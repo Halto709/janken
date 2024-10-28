@@ -20,7 +20,7 @@ public interface MatchInfoMapper {
   MatchInfo selectMatchInfo(int user1, int user2);
 
   // すでにマッチがあるかどうかを確認
-  @Select("SELECT EXISTS (SELECT 1 FROM matchInfo WHERE user1 = #{user1} AND user2 = #{user2})")
+  @Select("SELECT EXISTS (SELECT 1 FROM matchInfo WHERE user1 = #{user1} AND user2 = #{user2} AND isActive = true) ")
   Boolean isMatchInfo(int user1, int user2);
 
   @Select("SELECT id, user1, user2, user1Hand, isActive FROM matchInfo where isActive = true")
